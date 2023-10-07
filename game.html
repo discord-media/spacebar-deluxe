@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Spacebar Clicker Deluxe</title>
+  
+  <style>
+    body {
+      font-family: Calibri, sans-serif;
+      transition: background-color 5s;
+    }
+
+    #number {
+      font-size: 5em;
+      text-align: center;
+      position: absolute; 
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #eee;
+      padding: 20px; 
+      border-radius: 5px;
+      border: 5px solid #333;
+      width: 50vw;
+      transition: background-color 2s;
+    }
+
+    #level {
+display: none;
+    }
+
+    #progress-container {
+      text-align: center;
+    }
+
+    #progress-bar {
+      height: 20px;
+      width: 0%; 
+      background: green;
+      opacity: 50%;
+      border-radius: 5px;
+      margin-top: 10px;
+      transition: width 0.5s;
+    }
+
+    #status {
+      text-align: center;
+border: 90% solid gray;
+border-radius: 5px;
+margin-top: 3px;
+    }
+
+#reset-button {
+      background: transparent;
+      border: 2px solid transparent;
+      color: red;
+      cursor: pointer;
+      margin-top: 10px;
+font-style: italic;
+font-size: 10px;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="level"></div>
+  <div id="number"></div>
+
+  <!-- Progress bar -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div> 
+  
+  <!-- Status display -->
+  <div id="status"></div>
+
+<!-- Reset button -->
+  <button id="reset-button" onclick="resetStats()">Reset Stats (CANNOT BE UNDONE!)</button>
+
+  <script>
+    let number = 1; 
+    let level = 1;
+    let clicks = 0;
+    let startTime = Date.now(); // Timestamp when the session started
+
+    function updateNumber() {
+      document.getElementById("number").innerText = number;
+      document.getElementById("level").innerText = "Level " + level;
+    }
+
+    function changeNumberColor() {
+      let randomColor = Math.floor(Math.random() * 16777215).toString(16);
+      numberEl.style.backgroundColor = "#" + randomColor;
+    }
+
+    function changeBackgroundColor() {
+      let randomColor = Math.floor(Math.random() * 16777215).toString(16);
+      document.body.style.backgroundColor = "#" + randomColor;
+      changeNumberColor();
+    }
+
+    document.body.onkeyup = function(e) {
+      if (e.keyCode == 32) {
+        number--;
+        clicks++;
+        updateNumber();
+        updateProgressBar();
+
+        if (number <= 0) {
+          level++;
+          number = level; 
+          clicks = 0;
+          updateNumber();
+          resetProgressBar();
+        }
+      }
+    }
+
+    let numberEl = document.getElementById("number");
+    let progressBar = document.getElementById("progress-bar");
+    let statusDisplay = document.getElementById("status");
+
+    function updateProgressBar() {
+      // Calculate progress percentage within the current level
+      const progress = (clicks / level) * 100;
+      progressBar.style.width = progress + "%";
+
+      // Calculate total time spent
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - startTime;
+      const hours = Math.floor(elapsedTime / 3600000); // 3600000 milliseconds in an hour
+      const minutes = Math.floor((elapsedTime % 3600000) / 60000); // 60000 milliseconds in a minute
+      const seconds = Math.floor((elapsedTime % 60000) / 1000); // 1000 milliseconds in a second
+
+      // Display the status with level, completion percentage, and time spent
+      statusDisplay.innerText = `Level ${level} | ${progress.toFixed(2)}% | ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+    }
+
+    function resetProgressBar() {
+      // Reset the progress bar to 0%
+      progressBar.style.width = "0%";
+    }
+
+    function formatTime(value) {
+      // Format time values to have leading zeros if needed
+      return value < 10 ? `0${value}` : value;
+    }
+
+    setInterval(changeNumberColor, 2000);
+    setInterval(changeBackgroundColor, 5000);
+    setInterval(updateProgressBar, 1000); // Update progress every second
+
+// Check if data exists in localStorage and load it if available
+    if (localStorage.getItem("number")) {
+      number = parseInt(localStorage.getItem("number"));
+      level = parseInt(localStorage.getItem("level"));
+      clicks = parseInt(localStorage.getItem("clicks"));
+      startTime = parseInt(localStorage.getItem("startTime"));
+    }
+
+    // Function to save data to localStorage
+    function saveDataToLocalStorage() {
+      localStorage.setItem("number", number.toString());
+      localStorage.setItem("level", level.toString());
+      localStorage.setItem("clicks", clicks.toString());
+      localStorage.setItem("startTime", startTime.toString());
+    }
+
+    function updateNumber() {
+      document.getElementById("number").innerText = number;
+      document.getElementById("level").innerText = "Level " + level;
+    }
+
+    // ... (your existing functions) ...
+
+function resetStats() {
+      number = 1;
+      level = 1;
+      clicks = 0;
+      startTime = Date.now();
+      resetProgressBar();
+      updateNumber();
+      saveDataToLocalStorage();
+    }
+
+    setInterval(changeNumberColor, 2000);
+    setInterval(changeBackgroundColor, 5000);
+    setInterval(updateProgressBar, 1000); // Update progress every second
+
+    // Autosave every 5 seconds
+    setInterval(saveDataToLocalStorage, 5000);
+  </script>
+</body>
+</html>
