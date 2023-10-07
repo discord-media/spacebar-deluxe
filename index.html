@@ -59,6 +59,20 @@ font-style: italic;
 font-size: 10px;
     }
 
+/* Add this CSS for styling the level-up message */
+.level-up-message {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: blue;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  display: none; /* Initially hide the message */
+}
+
+
+
   </style>
 </head>
 <body>
@@ -75,6 +89,9 @@ font-size: 10px;
 
 <!-- Reset button -->
   <button id="reset-button" onclick="resetStats()">Reset Stats (CANNOT BE UNDONE!)</button>
+
+<!-- Add this HTML for the level-up message -->
+<div class="level-up-message" id="level-up-message"></div>
 
   <script>
     let number = 1; 
@@ -111,6 +128,7 @@ font-size: 10px;
           clicks = 0;
           updateNumber();
           resetProgressBar();
+	  showLevelUpMessage();
         }
       }
     }
@@ -188,6 +206,26 @@ function resetStats() {
 
     // Autosave every 5 seconds
     setInterval(saveDataToLocalStorage, 5000);
+
+// Add this JavaScript code to show the level-up message
+function showLevelUpMessage() {
+  const levelUpMessage = document.getElementById("level-up-message");
+  const currentTime = Date.now();
+  const elapsedTime = currentTime - startTime;
+  const hours = Math.floor(elapsedTime / 3600000); // 3600000 milliseconds in an hour
+  const minutes = Math.floor((elapsedTime % 3600000) / 60000); // 60000 milliseconds in a minute
+  const seconds = Math.floor((elapsedTime % 60000) / 1000); // 1000 milliseconds in a second
+  levelUpMessage.innerText = `You reached Level ${level} in ${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}!`;
+
+  // Show the message and set a timeout to hide it after 3 seconds
+  levelUpMessage.style.display = "block";
+  setTimeout(() => {
+    levelUpMessage.style.display = "none";
+  }, 3000); // Hide the message after 3 seconds
+}
+
+
+
   </script>
 </body>
 </html>
